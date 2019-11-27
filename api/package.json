@@ -1,0 +1,24 @@
+{
+  "name": "social_media_project",
+  "version": "1.0.0",
+  "description": "Backend social_media_project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "author": "Kevin Palomino Sanchez",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.19.0",
+    "connect-multiparty": "^2.2.0",
+    "express": "^4.17.1",
+    "jwt-simple": "^0.5.6",
+    "moment": "^2.24.0",
+    "mongoose": "^5.7.12"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.1"
+  }
+}
