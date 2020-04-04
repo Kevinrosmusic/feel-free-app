@@ -228,6 +228,36 @@ function updateUser(req, res) {
 
 }
 
+
+/////////////////////////////////////////////// NUM USERS ////////////////////////////////////////////////////////////
+
+function getCounters(req, res) {
+
+    var userId = req.user.sub;
+
+    if (req.params.id) {
+        var userId = req.params.id
+
+    } else {
+        getCountFollow(userId).then((value) => {
+            return res.status(200).send(value)
+        })
+
+    }
+}
+
+async function getCountFollow(user_id) {
+
+    var following = await Follow.count({ "user": user_id })
+
+    var followed = await Follow.count({ "followed": user_id })
+
+    return {
+        following: following,
+        followed: followed
+    }
+}
+
 //////////////////////////////////////////////// UPLOAD IMAGES & AVATAR ////////////////////////////////////////
 
 function uploadImage(req, res) {
@@ -312,6 +342,7 @@ module.exports = {
     loginUser,
     getUser,
     getUsers,
+    getCounters,
     updateUser,
     uploadImage,
     getImageFile
