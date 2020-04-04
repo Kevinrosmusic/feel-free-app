@@ -34,7 +34,7 @@ function saveUser(req, res) {
         user.role = 'ROLE_USER';
         user.image = null;
 
-///////////////////////////////////// Controlar usuarios duplicados //////////////////////////////////////////////////
+        ///////////////////////////////////// CONTROL DUPLICATE USERS //////////////////////////////////////////////////
 
         User.find({
             $or: [
@@ -75,7 +75,7 @@ function saveUser(req, res) {
     }
 }
 
-////////////////////////////////////////////////// LOGIN ////////////////////////////////////////////////////////////
+////////////////////////////////////////////////// LOGIN /////////////////////////////////////////////////////
 
 function loginUser(req, res) {
     var params = req.body
@@ -89,9 +89,9 @@ function loginUser(req, res) {
         if (user) {
             bcrypt.compare(password, user.password, (err, check) => {
                 if (check) {
-                    //Devolver datos usuario
+                    ////////////////////////////////////////// RETURN USER DATA /////////////////////////////////////////////////
                     if (params.gettoken) {
-                        //Generar y devolver token
+                        ///////////////////////////////////////// GENERATE AND RETURN TOKEN ////////////////////////////////////////s
                         return res.status(200).send({
                             token: jwt.createToken(user)
                         })
@@ -111,16 +111,11 @@ function loginUser(req, res) {
     })
 }
 
-////////////////////////////////////////////////// USER DATA ////////////////////////////////////////////////////////////
+////////////////////////////////////////////////// USER DATA /////////////////////////////////////////////////
 
 function getUser(req, res) {
 
     var userId = req.params.id
-
-    Follow.findOne({'user': req.user.sub, 'followed':userId}).exec((err, follow) =>{
-        if (err) return res.status(500).send({ message: 'Error al comprobar el seguimiento'})
-         return res.status(200).send({ user, follow })
-    })
 
     User.findById(userId, (err, user) => {
         if (err) return res.status(500).send({
@@ -128,21 +123,29 @@ function getUser(req, res) {
         })
 
         if (err) return res.status(404).send({
-            message: 'El usuario no se ha encontrado'
+            message: 'El usuario no se existe'
         })
-        return res.status(200).send({ user })
+
+        followThisUser(req.user.sub, userId).then((value) => {
+            return res.status(200).send({
+                user,
+                following: value.following,
+                followed: value.followed
+            })
+        })
+
     })
 }
 
-async function followThisUser(indentity_user_id, user_id){
-    var following = await Follow.findOne({'user': indentity_user_id, 'followed':user_id}).exec((err, follow) =>{
+async function followThisUser(indentity_user_id, user_id) {
+    var following = await Follow.findOne({ 'user': indentity_user_id, 'followed': user_id }).exec((err, follow) => {
         if (err) return handleError(err)
-            return follow
+        return follow
     })
 
-    var followed =  await Follow.findOne({'user': user_id, 'followed':indentity_user_id}).exec((err, follow) =>{
+    var followed = await Follow.findOne({ 'user': user_id, 'followed': indentity_user_id }).exec((err, follow) => {
         if (err) return handleError(err)
-            return follow
+        return follow
     })
 
     return {
@@ -152,7 +155,20 @@ async function followThisUser(indentity_user_id, user_id){
 
 }
 
-//////////////////////////////////////////////// USERS PAGINATION /////////////////////////////////////////////////////////
+async function followUserIds(user_id) {
+
+    var following = await Follow.find({ 'user': user_id }).select({ '_id': 0, '__v': 0, 'user': 0 }).distinct('followed')
+
+
+    var followed = await Follow.find({ 'followed': user_id }).select({ '_id': 0, '__v': 0, 'followed': 0 }).distinct('user')
+
+    return {
+        following: following,
+        followed: followed
+    }
+}
+
+//////////////////////////////////////////////// USERS PAGINATION //////////////////////////////////////////////
 
 function getUsers(req, res) {
     var identity_user_id = req.user.sub
@@ -166,18 +182,26 @@ function getUsers(req, res) {
 
     User.find().sort('_id').paginate(page, itempsPerPage, (err, users, total) => {
         if (!users) return res.status(404).send({
-            message: 'No hay usuarios disponibles en la plataforma'
+            message: 'No hay usuarios disponibles'
         })
 
-        return res.status(200).send({
-            users,
-            total,
-            pages: Math.ceil(total / itempsPerPage)
+        followUserIds(identity_user_id).then((value) => {
+
+            console.log(value)
+
+            return res.status(200).send({
+                users,
+                users_following: value.following,
+                users_follow_me: value.followed,
+                total,
+                pages: Math.ceil(total / itempsPerPage)
+            })
+
         })
     })
 }
 
-/////////////////////////////////////////////////// UPDATE DATA USER ////////////////////////////////////////////////
+/////////////////////////////////////////////////// UPDATE DATA USER /////////////////////////////////////////
 
 function updateUser(req, res) {
     var userId = req.params.id
@@ -204,7 +228,7 @@ function updateUser(req, res) {
 
 }
 
-//////////////////////////////////////////////// UPLOAD IMAGES & AVATAR /////////////////////////////////////////////////
+//////////////////////////////////////////////// UPLOAD IMAGES & AVATAR ////////////////////////////////////////
 
 function uploadImage(req, res) {
 
@@ -215,7 +239,7 @@ function uploadImage(req, res) {
         var file_path = req.files.image.path
 
         var file_split = file_path.split('\\')
-        
+
         var file_name = file_split[2];
 
         console.log(file_name);
@@ -232,7 +256,7 @@ function uploadImage(req, res) {
 
         if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif') {
 
-///////////////////////////////////// UPDATE DATA USER LOGED///////////////////////////////////////////////////
+            ///////////////////////////////////// UPDATE DATA USER LOGED///////////////////////////////////////////////////
 
             return User.findByIdAndUpdate(userId, { new: true }, (err, userUpdated) => {
 
@@ -265,7 +289,7 @@ function uploadImage(req, res) {
     }
 }
 
-////////////////////////////////////////////// GET IMAGE ///////////////////////////////////////////////////////////////
+////////////////////////////////////////////// GET IMAGE //////////////////////////////////////////////////////
 
 function getImageFile(req, res) {
     var image_file = req.params.imageFile
