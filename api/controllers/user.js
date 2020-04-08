@@ -6,6 +6,10 @@ var User = require('../models/user')
 var jwt = require('../services/jwt')
 var fs = require('fs')
 var path = require('path')
+var Publication = require('../models/publication')
+
+
+
 var Follow = require('../models/follow')
 
 function home(req, res) {
@@ -187,7 +191,6 @@ function getUsers(req, res) {
 
         followUserIds(identity_user_id).then((value) => {
 
-            console.log(value)
 
             return res.status(200).send({
                 users,
@@ -229,34 +232,42 @@ function updateUser(req, res) {
 }
 
 
-/////////////////////////////////////////////// NUM USERS ////////////////////////////////////////////////////////////
+/////////////////////////////////////////////// NUM FOLLOWS AND PUBLICATIONS /////////////////////////////////////
 
 function getCounters(req, res) {
 
     var userId = req.user.sub;
 
+
     if (req.params.id) {
         var userId = req.params.id
 
-    } else {
-        getCountFollow(userId).then((value) => {
-            return res.status(200).send(value)
-        })
-
     }
+
+    getCountFollow(userId).then((value) => {
+        return res.status(200).send(value)
+    })
+
 }
 
 async function getCountFollow(user_id) {
+
+
 
     var following = await Follow.count({ "user": user_id })
 
     var followed = await Follow.count({ "followed": user_id })
 
+    var publications = await Publication.count({ 'user': user_id })
+
     return {
         following: following,
-        followed: followed
+        followed: followed,
+        publications: publications
     }
 }
+
+
 
 //////////////////////////////////////////////// UPLOAD IMAGES & AVATAR ////////////////////////////////////////
 
@@ -272,13 +283,11 @@ function uploadImage(req, res) {
 
         var file_name = file_split[2];
 
-        console.log(file_name);
-
         var ext_split = file_name.split('\.')
 
         var file_ext = ext_split[1]
 
-        console.log(file_ext)
+      
 
         if (userId != req.user.sub) {
             return removeFilesOfUploads(res, file_path, 'No tienes permiso para actualizar los datos de usuario')

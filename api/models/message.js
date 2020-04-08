@@ -5,7 +5,8 @@ var Schema = mongoose.Schema;
 
 var MessageSchema = Schema({
 
-	text : String
+	text : String,
+	viewed: String,
 	created_ad : String,
 	emmiter : {type: Schema.ObjectId, ref: 'User' },
 	receiver : {type: Schema.ObjectId, ref: 'User' }
