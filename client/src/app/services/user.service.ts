@@ -10,7 +10,6 @@ import { GLOBAL } from './global'
 export class UserService {
 
 	public url:string
-
 	
 	constructor(public _http: HttpClient) {
 		this.url = GLOBAL.url
@@ -23,5 +22,17 @@ export class UserService {
 		console.log(this.url)
 
 		return this._http.post(this.url+'register', params, {headers:headers})
+	}
+
+	singup(user: User, gettoken = null): Observable<any>{
+			if(gettoken != null){
+
+				user.gettoken = gettoken
+			}
+
+			let params = JSON.stringify(user)
+			let headers = new HttpHeaders().set('Content-Type', 'application/json')
+
+			return this._http.post(this.url+'login', params, {headers: headers})
 	}
 }
