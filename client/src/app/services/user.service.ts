@@ -11,7 +11,8 @@ export class UserService {
 
 	public url:string
 	public identity
-	public token
+	public token;
+	public stats;
 	
 	constructor(public _http: HttpClient) {
 		this.url = GLOBAL.url
@@ -21,12 +22,11 @@ export class UserService {
 		
 		let params = JSON.stringify(user)
 		let headers = new HttpHeaders().set('Content-Type', 'application/json')
-		console.log(this.url)
 
 		return this._http.post(this.url+'register', params, {headers:headers})
 	}
 
-	singup(user: User, gettoken = null): Observable<any>{
+	singup(user, gettoken = null): Observable<any>{
 			if(gettoken != null){
 				
 				user.gettoken = gettoken
@@ -41,8 +41,6 @@ export class UserService {
 	getIdentity(){
 
 		let identity = JSON.parse(localStorage.getItem('identity'))
-
-		console.log(identity)
 
 		if(identity != 'undefined'){
 			this.identity = identity
@@ -63,5 +61,36 @@ export class UserService {
 		}
 
 		return this.token
+	}
+
+	getStats(){
+		let stats = JSON.parse(localStorage.getItem('stats'))
+
+		if(stats != undefined){
+			this.stats = stats
+		}else{
+			this.stats = null
+		}
+
+		return this.stats
+	}
+
+	getCounters(userId = null): Observable<any>{
+		let headers = new HttpHeaders().set('Content-type', 'application/json')
+		.set('Authorization', this.getToken())
+
+		if(userId != null){
+			return this._http.get(this.url+'counters/'+userId, {headers: headers})
+		}else{
+			return this._http.get(this.url+'counters/', {headers: headers})
+		}
+	}
+
+	updateUser(user: User):Observable <any>{
+		let params = JSON.stringify(user)
+		let headers = new HttpHeaders().set('Content-type', 'application/json')
+								   .set('Authorization', this.getToken())
+
+		return this._http.put(this.url+'update-user'+user._id, params, {headers: headers})
 	}
 }

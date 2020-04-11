@@ -50,7 +50,7 @@
         </li>
       </ul>
 
-<ul class="nav navbar navbar-right" *ngIf="identity">
+<ul class="nav navbar-nav navbar-right" *ngIf="identity">
 <li class="avatar">
 <!--CARGAR IMAGEN DE USUARIO-->
 </li>
@@ -65,18 +65,21 @@
   <li>
 <a href="#">
  <span class="glyphicon glyphicon-user"></span>
+ Mi perfil
 </a>
   </li>
   <li>
-    <a href="#">
+    <a href="#" routerLink="/mis-datos">
 <span class="glyphicon glyphicon-cog"></span>
+Mis datos
 </a>
 
   </li>
 
   <li>
-    <a href="#">
+    <a class="pointer" href="#" (click)="logout()">
 <span class="glyphicon glyphicon-log-out"></span>
+Cerrar sesión
 </a>
 
   </li>

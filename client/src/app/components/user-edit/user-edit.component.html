@@ -1,0 +1,51 @@
+<div class="col-lg-6">
+  <h1> {{title}} </h1>
+
+  <div class="alert alert-succes" *ngIf="status == 'success'">
+  	Los datos se han actualizado correctamente
+  </div>	
+  <div class="alert alert-danger" *ngIf="status == 'error'">
+  	Error al actualizar los datos
+  </div>	
+
+
+  <form #userEditForm="ngForm" (ngSubmit)="onSubmit()" class="col-lg-12">
+
+  	<p>
+  		<label>Nombre: </label>
+  		<input type="text" name="name" #name="ngModel" [(ngModel)]="user.name" required class="form-control">
+  		<span *ngIf="!name.value && name.touched">
+  			El Nombre es obligatorio
+  		</span>
+  	</p>
+
+  	<p>
+  		<label>Apellidos: </label>
+  		<input type="text" name="surname" #surname="ngModel" [(ngModel)]="user.surname" required class="form-control">
+  		<span *ngIf="!surname.value && surname.touched">
+  			Los apellidos son obligatorios
+  		</span>
+  	</p>
+
+  	<p>
+  		<label>Nick: </label>
+  		<input type="text" name="nick" #nick="ngModel" [(ngModel)]="user.nick" required class="form-control">
+  		<span *ngIf="!nick.value && nick.touched" >
+  			El Nick es obligatorio
+  		</span>
+  	</p>
+
+  	<p>
+  		<label>Correo eléctronico: </label>
+  		<input type="email" name="email" #email="ngModel" [(ngModel)]="user.email" required
+  		pattern="^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$" class="form-control">
+  		<span *ngIf="!email.value && email.touched">
+  			El correo electrónico es obligatorio
+  		</span>
+  	</p>
+
+  	<input type="submit" value="{{title}}" class="btn btn-warning" [disabled]="!userEditForm.form.valid" />
+
+  </form>
+
+ </div>
