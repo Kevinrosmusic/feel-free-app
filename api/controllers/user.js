@@ -214,21 +214,22 @@ function updateUser(req, res) {
     delete update.password
 
     if (userId != req.user.sub) {
+
         return res.status(500).send({
             message: 'No tienes permiso para actualizar los datos de usuario'
         })
-
-        User.findByIdAndUpdate(userId, update, { new: true }, (err, userUpdated) => {
-            if (err) return res.status(500).send({ message: 'Error al hacer la petición' })
-            if (!userUpdated) return res.status(404).send({
-                message: 'No se ha podido actualizar el usuario'
-            })
-
-            return res.status(200).send({ user: userUpdated })
-
-        })
     }
 
+    User.findByIdAndUpdate(userId, update, { new: true }, (err, userUpdated) => {
+
+        if (err) return res.status(500).send({ message: 'Error al hacer la petición' })
+        if (!userUpdated) return res.status(404).send({
+            message: 'No se ha podido actualizar el usuario'
+        })
+
+        return res.status(200).send({ user: userUpdated })
+
+    })
 }
 
 
@@ -287,7 +288,7 @@ function uploadImage(req, res) {
 
         var file_ext = ext_split[1]
 
-      
+
 
         if (userId != req.user.sub) {
             return removeFilesOfUploads(res, file_path, 'No tienes permiso para actualizar los datos de usuario')
