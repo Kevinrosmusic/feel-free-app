@@ -10,6 +10,8 @@ import { GLOBAL } from './global'
 export class UserService {
 
 	public url:string
+	public identity
+	public token
 	
 	constructor(public _http: HttpClient) {
 		this.url = GLOBAL.url
@@ -26,7 +28,7 @@ export class UserService {
 
 	singup(user: User, gettoken = null): Observable<any>{
 			if(gettoken != null){
-
+				
 				user.gettoken = gettoken
 			}
 
@@ -34,5 +36,32 @@ export class UserService {
 			let headers = new HttpHeaders().set('Content-Type', 'application/json')
 
 			return this._http.post(this.url+'login', params, {headers: headers})
+	}
+
+	getIdentity(){
+
+		let identity = JSON.parse(localStorage.getItem('identity'))
+
+		console.log(identity)
+
+		if(identity != 'undefined'){
+			this.identity = identity
+		}else{
+			identity = null
+		}
+
+		return this.identity
+	}
+
+	getToken(){
+		let token = localStorage.getItem('token')
+
+		if( token != "undefined"){
+			this.token = token
+		}else{
+			this.token = null
+		}
+
+		return this.token
 	}
 }

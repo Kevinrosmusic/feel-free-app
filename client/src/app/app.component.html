@@ -1,14 +1,91 @@
 <div class="navigation col-lg-12">
   <nav class="navbar navbar-default">
     <div class="container-fluid">
+
+
       <div class="navbar-header">
         <a class="navbar-brand" href="#">{{title}}</a>
       </div>
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Inicio</a></li>
-        <li><a href="#">Timeline</a></li>
-        <li><a href="#">Gente</a></li>
+
+
+      <ul class="nav navbar-nav" *ngIf="identity">
+
+        <li class="active">
+          <a href="#">
+          Inicio
+          </a>
+        </li>
+
+
+        <li>
+          <a href="#">
+          Timeline
+          </a>
+        </li>
+
+
+        <li>
+          <a href="#">
+          Gente
+          </a>
+        </li>
+
       </ul>
+
+
+      <ul class="nav navbar navbar-nav navbar-right" *ngIf="!identity">
+
+        <li class="active">
+          <a routerLink="/login" [routerLinkActive]="['active']"> 
+            <span class="glyphicon glyphicon-log-in"> </span>
+            Login
+           </a>
+        </li>
+
+        <li>
+          <a routerLink="/registro" [routerLinkActive]="['active']">
+            <span class="glyphicon glyphicon-user"> </span>
+            Registro
+          </a>
+        </li>
+      </ul>
+
+<ul class="nav navbar navbar-right" *ngIf="identity">
+<li class="avatar">
+<!--CARGAR IMAGEN DE USUARIO-->
+</li>
+
+<li class="dropdown">
+
+<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+  {{identity.name}} <span class="caret"></span>
+</a>
+
+<ul class="dropdown-menu">
+  <li>
+<a href="#">
+ <span class="glyphicon glyphicon-user"></span>
+</a>
+  </li>
+  <li>
+    <a href="#">
+<span class="glyphicon glyphicon-cog"></span>
+</a>
+
+  </li>
+
+  <li>
+    <a href="#">
+<span class="glyphicon glyphicon-log-out"></span>
+</a>
+
+  </li>
+  
+</ul>
+
+</li>
+</ul>
+
     </div>
   </nav>
 </div>

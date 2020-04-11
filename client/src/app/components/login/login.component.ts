@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core'
-import { Router, ActivatedRoute, Params } from '@angular/router'
+import { Router, ActivatedRoute, Params, RouterModule } from '@angular/router'
 import { User } from '../../models/user'
 import { UserService } from '../../services/user.service'
+
 
 @Component({
 	selector:'login', 
@@ -62,7 +63,6 @@ export class LoginComponent implements OnInit{
 
 	getToken(){
 		//LOGEAR AL USUARIO Y CONSEGUIR SUS DATOS
-		console.log(this.user)
 		this._userService.singup(this.user, 'true').subscribe(
 
 			response  => {
@@ -74,10 +74,8 @@ export class LoginComponent implements OnInit{
 				}else {
 					this.status = 'success'
 				}
-				console.log(response)
 				this.status="success"
 				// PERSISTIR TOKEN DEL USUARIO
-
 
 				localStorage.setItem('token', this.token)
 
