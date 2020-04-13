@@ -220,16 +220,37 @@ function updateUser(req, res) {
         })
     }
 
-    User.findByIdAndUpdate(userId, update, { new: true }, (err, userUpdated) => {
+    User.find({
+        $or: [
+            { email: update.email.toLowerCase() },
+            { nick: update.nick.toLowerCase() }
 
-        if (err) return res.status(500).send({ message: 'Error al hacer la petición' })
-        if (!userUpdated) return res.status(404).send({
-            message: 'No se ha podido actualizar el usuario'
+        ]
+    }).exec((err, user) => {
+
+            var user_isset = false
+            user.forEach((user) =>{
+                if (user._id != userId){
+                    return user_isset = true
+                }
+            })
+
+          if(user_isset) return res.status(404).send({
+            message: 'Los datos ya están en uso'
         })
 
-        return res.status(200).send({ user: userUpdated })
+        User.findByIdAndUpdate(userId, update, { new: true }, (err, userUpdated) => {
 
+            if (err)  res.status(500).send({ message: 'Error al hacer la petición' })
+            if (!userUpdated) return res.status(404).send({
+                message: 'No se ha podido actualizar el usuario'
+            })
+
+            return res.status(200).send({ user: userUpdated })
+
+        })
     })
+
 }
 
 
@@ -288,9 +309,11 @@ function uploadImage(req, res) {
 
         var file_ext = ext_split[1]
 
+        
 
 
         if (userId != req.user.sub) {
+      
             return removeFilesOfUploads(res, file_path, 'No tienes permiso para actualizar los datos de usuario')
         }
 
@@ -298,7 +321,7 @@ function uploadImage(req, res) {
 
             ///////////////////////////////////// UPDATE DATA USER LOGED///////////////////////////////////////////////////
 
-            return User.findByIdAndUpdate(userId, { new: true }, (err, userUpdated) => {
+            return User.findByIdAndUpdate(userId, {image: file_name}, { new: true }, (err, userUpdated) => {
 
                 if (err) return res.status(500).send({ message: 'Error al hacer la petición' })
                 if (!userUpdated) return res.status(404).send({
