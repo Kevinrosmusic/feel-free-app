@@ -53,6 +53,8 @@
 <ul class="nav navbar-nav navbar-right" *ngIf="identity">
 <li class="avatar">
 <!--CARGAR IMAGEN DE USUARIO-->
+<img src="{{ url + 'get-image-user/' + identity.image}}" *ngIf=" identity && identity.image"
+style="width:35px; height: 35px; border-radius: 100px; overflow: hidden; margin-top: 9px; margin-right: 2px"/>
 </li>
 
 <li class="dropdown">

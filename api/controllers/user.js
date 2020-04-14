@@ -309,8 +309,6 @@ function uploadImage(req, res) {
 
         var file_ext = ext_split[1]
 
-        
-
 
         if (userId != req.user.sub) {
       

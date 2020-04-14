@@ -6,6 +6,7 @@ import { UploadService } from '../../services/upload.service'
 import { GLOBAL } from '../../services/global'
 
 
+
 @Component({
 	selector: 'user-edit',
 	templateUrl: './user-edit.component.html',
@@ -20,6 +21,7 @@ export class UserEditComponent implements OnInit {
 	public token
 	public status: string
 	public url: string
+	public result
 	
 	constructor(
 		private _route: ActivatedRoute,
@@ -32,6 +34,7 @@ export class UserEditComponent implements OnInit {
 		this.identity = this.user
 		this.token = this._userService.getToken()
 		this.url = GLOBAL.url
+
 	}
 
 	ngOnInit(){
@@ -54,12 +57,9 @@ export class UserEditComponent implements OnInit {
 
 					this._uploadService.makeFileRequest(this.url+'upload-image-user/'+ 
 						this.user._id,[], this.filesToUpload, this.token, 'image').then((result: any) =>{
-							this.user.image = result.image
-
-							console.log(this.filesToUpload)
-
+							this.user.image = result.user.image
+						
 							localStorage.setItem('identity', JSON.stringify(this.user))
-							console.log(result)
 
 						})
 				}

@@ -20,14 +20,9 @@ export class UploadService {
 
 			for(var i= 0; i < files.length; i++){
 
-
 				formData.append(name, files[i], files[i].name)
 				
 			}
-
-			for (var pair of formData.entries()) {
-    				console.log(pair[0]+ ', ' + pair[1]); 
-				}
 			
 			xhr.onreadystatechange = function () {
 				if(xhr.readyState == 4){
